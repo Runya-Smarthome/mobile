@@ -7,13 +7,15 @@ import Colors from '../../constants/Colors'
 export default function CustomDropdown({
     width,
     placeholder,
-    onItemValueSelected,
+    onChangeValue,
     open,
     value,
     items,
     setOpen,
     setValue,
-    setItems
+    setItems,
+    onOpen,
+    onClose
 }){
 
     return(
@@ -30,10 +32,12 @@ export default function CustomDropdown({
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
-            onChangeValue={(value)=>{onItemValueSelected(value)}}
+            onChangeValue={onChangeValue}
             placeholderStyle={styles.placeholderStyle}
             style={styles.container}
             dropDownContainerStyle={styles.childContainer}
+            onOpen={onOpen}
+            onClose={onClose}
             />
         </View>
     )
