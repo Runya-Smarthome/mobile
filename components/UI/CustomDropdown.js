@@ -8,15 +8,16 @@ export default function CustomDropdown({
     width,
     placeholder,
     onChangeValue,
-    open,
     value,
     items,
-    setOpen,
     setValue,
     setItems,
     onOpen,
-    onClose
+    onClose,
+    onSelectItem
 }){
+
+    const [open, setOpen] = useState(false)
 
     return(
         <View
@@ -25,19 +26,20 @@ export default function CustomDropdown({
             }}
         >
             <DropDownPicker
-            placeholder={placeholder}
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-            onChangeValue={onChangeValue}
-            placeholderStyle={styles.placeholderStyle}
-            style={styles.container}
-            dropDownContainerStyle={styles.childContainer}
-            onOpen={onOpen}
-            onClose={onClose}
+                placeholder={placeholder}
+                open={open}
+                value={value}
+                items={items}
+                setOpen={setOpen}
+                setValue={setValue}
+                setItems={setItems}
+                onChangeValue={onChangeValue}
+                placeholderStyle={styles.placeholderStyle}
+                style={styles.container}
+                dropDownContainerStyle={styles.childContainer}
+                onOpen={onOpen}
+                onClose={onClose}
+                onSelectItem={onSelectItem}
             />
         </View>
     )

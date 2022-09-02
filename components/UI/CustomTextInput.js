@@ -2,13 +2,16 @@ import { TextInput, StyleSheet } from "react-native"
 
 import Colors from "../../constants/Colors"
 
-export default function CustomTextInput({placeholder, onChangeText, editable, style}) {
+export default function CustomTextInput({placeholder, onChangeText, editable, style, value, secureTextEntry, onChange}) {
     return(
         <TextInput 
             style={[styles.textInput, style]} 
             placeholder={placeholder}
             onChangeText={onChangeText}
             editable={editable}
+            value={value}
+            secureTextEntry={secureTextEntry}
+            onChange={onChange}
         />
     )
 }
