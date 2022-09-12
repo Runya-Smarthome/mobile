@@ -24,7 +24,11 @@ import Homepage from './screens/home/Index';
 import PickProfile from './screens/register/PickProfile';
 import ConfigProfile from './screens/register/ConfigProfile';
 import ConfigProfilePassword from './screens/register/ConfigProfilePassword';
-import { useEffect } from 'react';
+import Profile from './screens/profile/Index';
+import ManageProfile from './screens/profile/ManageProfile';
+import AddNewProfile from './screens/profile/AddNewProfile';
+import MemberOwnerAccess from './screens/profile/MemberOwnerAccess';
+import AllowedRooms from './screens/profile/AllowedRooms';
 
 export default function App() {
 
