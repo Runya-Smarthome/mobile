@@ -58,7 +58,12 @@ export default function App() {
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="ConfigProfile" component={ConfigProfile} />
         <Stack.Screen name="ConfigProfilePassword" component={ConfigProfilePassword} />
-        {/* <Stack.Screen name="Homepage" component={Homepage} /> */}
+        <Stack.Screen name="Homepage" component={Homepage} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="ManageProfile" component={ManageProfile} />
+        <Stack.Screen name="AddNewProfile" component={AddNewProfile} />
+        <Stack.Screen name="MemberOwnerAccess" component={MemberOwnerAccess} />
+        <Stack.Screen name="AllowedRooms" component={AllowedRooms} />
       </Stack.Navigator>
     </NavigationContainer>
   );
