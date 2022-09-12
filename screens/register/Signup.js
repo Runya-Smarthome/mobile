@@ -1,11 +1,60 @@
-import { View, Text, Image, StyleSheet} from 'react-native'
+import { View, Text, Image, StyleSheet, Alert} from 'react-native'
+import { useState } from 'react'
 
+import signupApi from '../../API/Signup'
 import Logo from '../../components/UI/Logo'
 import CustomTextInput from '../../components/UI/CustomTextInput'
 import PrimaryButton from '../../components/UI/PrimaryButton'
 import Title from '../../components/UI/Title'
 
-export default function Login() {
+
+export default function Login({navigation}) {
+
+    const [user, setUser] = useState({
+        username: '',
+        email: '',
+        password: '',
+        rePassword: '',
+        idDevice: ''
+    })
+    
+    const updateState = (key, value) => {
+        setUser(oldUser => ({
+          ...oldUser,
+          [key]: value,
+        }));
+    };
+
+
+    async function submitHandler(){
+
+        const data = await signupApi({
+            method: "POST",
+            body: {
+                username : user.username,
+                email: user.email,
+                password: user.password,
+                rePassword: user.rePassword,
+                idDevice: user.idDevice
+            }
+        }) 
+                
+        if(data.status === 201){
+            navigation.navigate("ConfigProfile",{
+                email: user.email
+            })
+            
+        } else{
+            Alert.alert(
+                "Failed to Sign In",
+                data.message,
+                [{text: "OK"}],
+                [{cancelable: true}]
+            );
+        }
+
+    }
+
     return(
         <View style={styles.container}>
             <Image
@@ -20,23 +69,39 @@ export default function Login() {
                     <Title>Sign Up</Title>
                     <CustomTextInput
                         style={{marginTop: 16}} 
+                        placeholder={"Id Device"}
+                        onChangeText={(text) => updateState('idDevice', text)}
+                        value={user.idDevice}
+                    />
+                    <CustomTextInput
+                        style={{marginTop: 16}} 
                         placeholder={"Username"}
+                        onChangeText={(text) => updateState('username', text)}
+                        value={user.username}
                     />
                     <CustomTextInput
                         style={{marginVertical: 16}} 
                         placeholder={"Email"}
+                        onChangeText={(text) => updateState('email', text)}
+                        value={user.email}
                     />
                     <CustomTextInput
                         placeholder={"Password"}
+                        onChangeText={(text) => updateState('password', text)}
+                        value={user.password}
+                        secureTextEntry={true}
                     />
                     <CustomTextInput
                         style={{marginVertical: 16}} 
                         placeholder={"Re-password"}
+                        onChangeText={(text) => updateState('rePassword', text)}
+                        value={user.rePassword}
+                        secureTextEntry={true}
                     />
                     <Text style={styles.textSmall}>Have an account?</Text>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <PrimaryButton>Sign Up</PrimaryButton>
+                    <PrimaryButton onPress={submitHandler}>Sign Up</PrimaryButton>
                 </View>
             </View>
             <Image

@@ -21,7 +21,10 @@ import Register from './screens/register/Index';
 import Login from './screens/register/Login';
 import Signup from './screens/register/Signup';
 import Homepage from './screens/home/Index';
-
+import PickProfile from './screens/register/PickProfile';
+import ConfigProfile from './screens/register/ConfigProfile';
+import ConfigProfilePassword from './screens/register/ConfigProfilePassword';
+import { useEffect } from 'react';
 
 export default function App() {
 
@@ -37,11 +40,13 @@ export default function App() {
     Inter_900Black,
   });
 
+
   const Stack = createNativeStackNavigator();
 
   if (!fontsLoaded) {
     return <AppLoading />;
   }
+
 
   return (
     <NavigationContainer>
@@ -49,8 +54,11 @@ export default function App() {
         <Stack.Screen  name="Onboarding" component={Onboarding} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen  name="Login" component={Login} />
+        <Stack.Screen name="PickProfile" component={PickProfile} />
         <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="Homepage" component={Homepage} />
+        <Stack.Screen name="ConfigProfile" component={ConfigProfile} />
+        <Stack.Screen name="ConfigProfilePassword" component={ConfigProfilePassword} />
+        {/* <Stack.Screen name="Homepage" component={Homepage} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
