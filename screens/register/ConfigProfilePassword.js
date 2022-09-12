@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import { useState } from 'react'
 
 import Logo from '../../components/UI/Logo'
@@ -6,16 +6,29 @@ import Title from '../../components/UI/Title'
 import PrimaryButton from '../../components/UI/PrimaryButton'
 import CustomDropdown from '../../components/UI/CustomDropdown'
 import CustomTextInput from '../../components/UI/CustomTextInput'
+import RegisterProfile from '../../API/RegisterProfile'
 
-export default function ConfigProfilePassword() {
+export default function ConfigProfilePassword({route}) {
 
-    const [open, setOpen] = useState(false);
+    
+
     const [value, setValue] = useState();
     const [items, setItems] = useState([
       {label: 'Yes', value: true},
       {label: 'No', value: false}
     ]);
     const [statusOpen, setStatusOpen] = useState(false)
+
+    const [password, setPassword] = useState('')
+    const [rePassword, setRePassword] = useState('')
+
+    const updatePasswordState = (p) => {
+        setPassword(p)
+    }
+
+    const updateRePasswordState = (p) => {
+        setRePassword(p)
+    }
 
     const dropdownOpenHandler = () => {
         setStatusOpen(true)
@@ -25,9 +38,71 @@ export default function ConfigProfilePassword() {
         setStatusOpen(false)
     }
 
-    const selectedItemHandler = (value) => {
-        //total person handler
-        console.log(value)
+    const selectedItemHandler = (v) => {
+        setValue(v)
+    }
+
+    async function pressHandler() {
+        //validation
+        if(value === true){
+            if(password === '' && rePassword === ''){
+                Alert.alert(
+                    "Failed to continue",
+                    "Password should be added",
+                    [{text: "OK"}],
+                    [{cancelable: true}]
+                );
+                return;
+            } else if(password !== rePassword){
+                Alert.alert(
+                    "Failed to continue",
+                    "Password and rePassword did not match",
+                    [{text: "OK"}],
+                    [{cancelable: true}]
+                );
+                return;
+            }
+            let index = route.params.profile.findIndex((profiles)=>profiles.role==='owner')
+            for(let i = 0; i < route.params.profile.length; i++){
+                if(i === index){
+                    route.params.profile[index].password = password
+                }else{
+                    route.params.profile[i].password = ''
+                }
+            }
+            
+            const data = await RegisterProfile({
+                method: "POST",
+                body: {
+                    email: route.params.email,
+                    profiles: route.params.profile
+                }
+            })
+
+            if(data.status === 201){
+                Alert.alert(
+                    "Berhasil Masuk",
+                    data.message,
+                    [{text: "OK"}],
+                    [{cancelable: true}]
+                );
+            } else{
+                Alert.alert(
+                    "Failed to Sign In",
+                    data.message,
+                    [{text: "OK"}],
+                    [{cancelable: true}]
+                );
+            }
+
+        }else{
+            for(let i = 0; i < route.params.profile.length; i++){
+                route.params.profile[i].password = ''
+            }
+            console.log(route.params.profile)
+            console.log("selesai tanpa password")
+        }
+
     }
 
     return(
@@ -38,39 +113,43 @@ export default function ConfigProfilePassword() {
             <View style={{marginTop: 90}}>
                 <Title>Create Password</Title>
                 <Text style={{marginTop: 24, marginBottom: 16}}>Use password for owner role?</Text>
-                <View style={{elevation: 3}}>
+                <View style={{elevation: 3, zIndex: 3}}>
                     <CustomDropdown
                         width={160}
                         placeholder={"Pick your answer"}
-                        open={open}
                         value={value}
                         items={items}
-                        setOpen={setOpen}
                         setValue={setValue}
                         setItems={setItems}
-                        onItemValueSelected={selectedItemHandler}
+                        onChangeValue={selectedItemHandler}
                         onOpen={dropdownOpenHandler}
                         onClose={dropdownCloseHandler}
                     />
                 </View>
-                { value === true ?
+                {
+                    value === true ?
+                    
                     <View>
                         <CustomTextInput 
-                            style={{marginTop: 24}} 
+                            style={{marginTop: 24, elevation: 1}} 
                             placeholder={"Password"}
-                            editable={statusOpen === true ? false : true}    
+                            editable={statusOpen === true ? false : true}
+                            onChangeText={updatePasswordState}
                         />
                         <CustomTextInput 
-                            style={{marginTop: 16}} 
+                            style={{marginTop: 16, elevation: 1}} 
                             placeholder={"Re-password"}
-                            editable={statusOpen === true ? false : true}    
+                            editable={statusOpen === true ? false : true}
+                            onChangeText={updateRePasswordState}    
                         />
                     </View>
+
                     : null
                 }
+
             </View>
             <View style={styles.buttonContainer}>
-                <PrimaryButton>Let's get started</PrimaryButton>
+                <PrimaryButton onPress={pressHandler}>Let's get started</PrimaryButton>
             </View>
         </View>
     )

@@ -1,12 +1,68 @@
-import { View, Text, Image, StyleSheet} from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable, Alert} from 'react-native'
+import { useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Logo from '../../components/UI/Logo'
 import CustomTextInput from '../../components/UI/CustomTextInput'
 import PrimaryButton from '../../components/UI/PrimaryButton'
 import Title from '../../components/UI/Title'
+import LoginApi from '../../API/Login'
+
 
 export default function Login({navigation}) {
 
+    const [user, setUser] = useState({
+        email: '',
+        password: ''
+    })
+
+    const updateState = (key, value) => {
+        setUser(oldValue => ({
+          ...oldValue,
+          [key]: value,
+        }));
+    };
+
+    async function onSubmitHandler(){
+        const data = await LoginApi({
+            method: "POST",
+            body: {
+                email: user.email,
+                password: user.password
+            }
+        })
+
+        if(data.status === 201){
+            Alert.alert(
+                "mantep",
+                data.message,
+                [{text: "OK"}],
+                [{cancelable: true}]
+            );
+
+            await AsyncStorage.setItem(
+                '@MyToken:key',
+                data.loginResult
+            );
+            
+            navigation.navigate("PickProfile",{
+                email: user.email
+            })
+
+        } else{
+            Alert.alert(
+                "Failed to Sign In",
+                data.message,
+                [{text: "OK"}],
+                [{cancelable: true}]
+            );
+        }
+    }
+    
+    function signUpPageHandler(){
+        navigation.navigate("Signup")
+    }
+    
     return(
         <View style={styles.container}>
             <Image
@@ -17,19 +73,22 @@ export default function Login({navigation}) {
                 <View style={styles.logoContainer}>
                     <Logo/>
                 </View>
-                <View style={styles.formContainer}>
+                <View>
                     <Title>Log In</Title>
                     <CustomTextInput 
                         style={{marginTop: 16}} 
                         placeholder={"Email"}
-                        onChangeText={setEmail}
+                        onChangeText={(text) => updateState('email', text)}
                     />
                     <CustomTextInput 
                         style={{marginVertical: 16}} 
                         placeholder={"Password"}
-                        onChangeText={setPassword}
+                        onChangeText={(text) => updateState('password', text)}
+                        secureTextEntry={true}
                     />
-                    <Text style={styles.textSmall}>Doesn't have an account?</Text>
+                    <Pressable onPress={signUpPageHandler}>
+                        <Text style={styles.textSmall}>Doesn't have an account?</Text>
+                    </Pressable>
                 </View>
                 <View style={styles.buttonContainer}>
                     <PrimaryButton onPress={onSubmitHandler}>Log In</PrimaryButton>

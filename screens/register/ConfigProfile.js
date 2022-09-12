@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native'
-import { useState } from 'react'
+import { View, Text, StyleSheet, Alert } from 'react-native'
+import { useEffect, useState } from 'react'
 
 import Logo from '../../components/UI/Logo'
 import Title from '../../components/UI/Title'
@@ -8,11 +8,26 @@ import CustomDropdown from '../../components/UI/CustomDropdown'
 import CustomTextInput from '../../components/UI/CustomTextInput'
 import Colors from '../../constants/Colors'
 
-export default function ConfigProfile() {
+export default function ConfigProfile({navigation, route}) {
+
+    const [profiles, setProfiles] = useState([])
+    
+    const changeInputHandler = (event, index) => {
+        const {target, text} = event.nativeEvent 
+        const list= [...profiles];
+        if(list[index] === undefined){
+            list[index]= {
+                username: text,
+            };
+            setProfiles(list);
+        } else {
+            list[index].username = text
+            setProfiles(list);
+        }
+    }
 
     const [statusOpenTotalPerson, setStatusOpenTotalPerson] = useState(false)
-    const [openTotalPerson, setOpenTotalPerson] = useState(false);
-    const [valueTotalPerson, setValueTotalPerson] = useState();
+    const [valueTotalPerson, setValueTotalPerson] = useState(0);
     const [itemsTotalPerson, setItemsTotalPerson] = useState([
       {label: '1 person', value: 1},
       {label: '2 person', value: 2},
@@ -20,8 +35,9 @@ export default function ConfigProfile() {
       {label: '4 person', value: 4},
     ]);
 
+    
     const selectedItemTotalPersonHandler = (value) => {
-        //total person handler
+        setValueTotalPerson(value)
     }
 
     const dropdownOpenHandler = () => {
@@ -32,16 +48,99 @@ export default function ConfigProfile() {
         setStatusOpenTotalPerson(false)
     }
 
-
-    const [openRole, setOpenRole] = useState(false);
-    const [valueRole, setValueRole] = useState();
     const [itemsRole, setItemsRole] = useState([
       {label: 'owner', value: "owner"},
       {label: 'member', value: "member"},
     ]);
 
-    const selectedItemRoleHandler = (value) => {
-        //role handler
+    const selectedItemRoleHandler = (event, index) => {
+
+        const list= [...profiles];
+        if(list[index] === undefined){
+            list[index]= {
+                role: event.value,
+            };
+            setProfiles(list);
+        } else {
+            list[index].role = event.value
+            setProfiles(list);
+        }
+
+    }
+
+    const checkTotalRole = (array) => {
+        let counter = 0
+        for (let item of array.flat()){
+            if(item === "owner"){
+                counter++
+            }
+        }
+        return counter
+    }
+
+    function pressHandler() {
+        //validation
+        let role = []
+        if(profiles.length > 0){
+            for(let i = 0; i < valueTotalPerson; i++){
+                if(profiles[i] === undefined){
+                    Alert.alert(
+                        "Failed to continue",
+                        "data should not be empty",
+                        [{text: "OK"}],
+                        [{cancelable: true}]
+                    );
+                    return;
+                }else if(profiles[i].role === undefined){
+                    Alert.alert(
+                        "Failed to continue",
+                        "role should not be empty",
+                        [{text: "OK"}],
+                        [{cancelable: true}]
+                    );
+                    return;
+                }else if(profiles[i].username === undefined){
+                    Alert.alert(
+                        "Failed to continue",
+                        "username should not be empty",
+                        [{text: "OK"}],
+                        [{cancelable: true}]
+                    );
+                    return;
+                }
+                
+                role.push(profiles[i].role)
+            }
+        }else{
+            Alert.alert(
+                "Failed to continue",
+                "profile should be added",
+                [{text: "OK"}],
+                [{cancelable: true}]
+            );
+            return
+        }
+        
+        let totalOwner = checkTotalRole(role);
+
+        if(totalOwner === 0){
+            Alert.alert(
+                "Failed to continue",
+                "Owner should be available",
+                [{text: "OK"}],
+                [{cancelable: true}]
+            );
+            return;
+        }else{
+            navigation.navigate("ConfigProfilePassword",{
+                email: route.params.email,
+                profile: profiles
+            })
+        }
+        
+        
+
+
     }
 
     return(
@@ -59,40 +158,42 @@ export default function ConfigProfile() {
                         <CustomDropdown
                             width={150}
                             placeholder={"Total Person"}
-                            open={openTotalPerson}
                             value={valueTotalPerson}
                             items={itemsTotalPerson}
-                            setOpen={setOpenTotalPerson}
                             setValue={setValueTotalPerson}
                             setItems={setItemsTotalPerson}
-                            onItemValueSelected={selectedItemTotalPersonHandler}
+                            onChangeValue={selectedItemTotalPersonHandler}
                             onOpen={dropdownOpenHandler}
                             onClose={dropdownCloseHandler}
                         />
                     </View>
                     <Text style={[styles.titleInput,{marginTop: 12}]}>Create username and role</Text>
-                    <View style={{marginTop: 12,flexDirection: 'row'}}>
-                        <CustomTextInput 
-                            style={{width: "60%", marginRight: 22, elevation: 1}} 
-                            placeholder={"username"}
-                            editable={statusOpenTotalPerson === true ? false : true}
-                            />
-                        <CustomDropdown
-                                width={105}
-                                placeholder={"Role"}
-                                open={openRole}
-                                value={valueRole}
-                                items={itemsRole}
-                                setOpen={setOpenRole}
-                                setValue={setValueRole}
-                                setItems={setItemsRole}
-                                onChangeValue={selectedItemRoleHandler}
-                            />
-                    </View>
+                    {
+                        Array(valueTotalPerson).fill().map((_, i) => (
+                            <View key={i} style={{marginTop: 12,flexDirection: 'row'}}>
+                                <CustomTextInput 
+                                    style={{width: "60%", marginRight: 22}} 
+                                    placeholder={"username"}
+                                    editable={statusOpenTotalPerson === true ? false : true}
+                                    onChange={(e)=>changeInputHandler(e,i)}
+                                />
+                                <View style={{elevation: 4-i, zIndex: 4-i}}>
+                                    <CustomDropdown
+                                        width={105}
+                                        placeholder={"Role"}
+                                        items={itemsRole}
+                                        value={profiles[i] === undefined ? "Role" : profiles[i].role }
+                                        setItems={setItemsRole}
+                                        onSelectItem={(e)=>selectedItemRoleHandler(e,i)}
+                                    />
+                                </View>
+                            </View>
+                        ))
+                    }
                 </View>
             </View>
             <View style={styles.buttonContainer}>
-                <PrimaryButton>Next</PrimaryButton>
+                <PrimaryButton onPress={pressHandler}>Next</PrimaryButton>
             </View>
         </View>
     )
