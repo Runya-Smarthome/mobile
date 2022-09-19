@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, Alert } from 'react-native'
 import { useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Logo from '../../components/UI/Logo'
 import Title from '../../components/UI/Title'
@@ -7,8 +8,9 @@ import PrimaryButton from '../../components/UI/PrimaryButton'
 import CustomDropdown from '../../components/UI/CustomDropdown'
 import CustomTextInput from '../../components/UI/CustomTextInput'
 import RegisterProfile from '../../API/RegisterProfile'
+import LoginApi from '../../API/Login'
 
-export default function ConfigProfilePassword({route}) {
+export default function ConfigProfilePassword({navigation, route}) {
 
     
 
@@ -86,6 +88,24 @@ export default function ConfigProfilePassword({route}) {
                     [{text: "OK"}],
                     [{cancelable: true}]
                 );
+                
+                const dataLogin = await LoginApi({
+                    method: "POST",
+                    body: {
+                        email: route.params.email,
+                        password: route.params.password
+                    }
+                })
+                
+                await AsyncStorage.setItem(
+                    '@MyTokenLogin:key',
+                    dataLogin.loginResult
+                );
+                
+                navigation.navigate("PickProfile",{
+                    email: route.params.email
+                })
+
             } else{
                 Alert.alert(
                     "Failed to Sign In",
@@ -99,8 +119,6 @@ export default function ConfigProfilePassword({route}) {
             for(let i = 0; i < route.params.profile.length; i++){
                 route.params.profile[i].password = ''
             }
-            console.log(route.params.profile)
-            console.log("selesai tanpa password")
         }
 
     }

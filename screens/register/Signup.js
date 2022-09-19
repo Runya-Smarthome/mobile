@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Alert} from 'react-native'
+import { View, Text, Image, StyleSheet, Alert, Pressable} from 'react-native'
 import { useState } from 'react'
 
 import signupApi from '../../API/Signup'
@@ -25,6 +25,9 @@ export default function Login({navigation}) {
         }));
     };
 
+    function loginPageHandler() {
+        navigation.navigate("Login")
+    }
 
     async function submitHandler(){
 
@@ -41,7 +44,8 @@ export default function Login({navigation}) {
                 
         if(data.status === 201){
             navigation.navigate("ConfigProfile",{
-                email: user.email
+                email: user.email,
+                password: user.password
             })
             
         } else{
@@ -98,7 +102,9 @@ export default function Login({navigation}) {
                         value={user.rePassword}
                         secureTextEntry={true}
                     />
-                    <Text style={styles.textSmall}>Have an account?</Text>
+                    <Pressable onPress={loginPageHandler}>
+                        <Text style={styles.textSmall}>Have an account?</Text>
+                    </Pressable>
                 </View>
                 <View style={styles.buttonContainer}>
                     <PrimaryButton onPress={submitHandler}>Sign Up</PrimaryButton>
