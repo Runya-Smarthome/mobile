@@ -5,7 +5,6 @@ const RegisterProfile = async (req, res) => {
     const API_REGPROF = `${BASE_URL}/api/auth/registerProfile`
     switch(req.method){
         case "POST":
-            console.log(req.body)
             try {
                 const result = await axios.post (API_REGPROF,{
                     email: req.body.email,
