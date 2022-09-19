@@ -34,14 +34,14 @@ export default function Login({navigation}) {
 
         if(data.status === 201){
             Alert.alert(
-                "mantep",
+                "Login Success",
                 data.message,
                 [{text: "OK"}],
                 [{cancelable: true}]
             );
 
             await AsyncStorage.setItem(
-                '@MyToken:key',
+                '@MyTokenLogin:key',
                 data.loginResult
             );
             

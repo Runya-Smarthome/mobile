@@ -134,13 +134,11 @@ export default function ConfigProfile({navigation, route}) {
         }else{
             navigation.navigate("ConfigProfilePassword",{
                 email: route.params.email,
+                password: route.params.password,
                 profile: profiles
             })
         }
         
-        
-
-
     }
 
     return(
