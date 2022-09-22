@@ -13,12 +13,18 @@ import LoginProfile from '../../API/LoginProfile'
 export default function PickProfile({navigation, route}) {
 
     const [dialogVisible, setDialogVisible] = useState(false)
+    
+    const [profileHasPassword, setProfileHasPassword] = useState({
+        id : "",
+        password : ""
+    })
+
     const [listProfiles, setListProfiles] = useState([])
 
     const color = ["yellow","red","blue","green"]
 
     async function getToken(){
-        const token = await AsyncStorage.getItem('@MyToken:key');
+        const token = await AsyncStorage.getItem('@MyTokenLogin:key');
         return token
     }
 
@@ -28,7 +34,9 @@ export default function PickProfile({navigation, route}) {
             return;
         } else if(isPassword === false){
             setDialogVisible(true)
-            return;
+            setProfileHasPassword(previousState => {
+                return { ...previousState, id }
+            });
         }
     }
     
@@ -44,6 +52,8 @@ export default function PickProfile({navigation, route}) {
                 'Authorization': `Bearer ${token}`
             }
         })
+
+        console.log(data)
 
         if(data.status === 201){
             await AsyncStorage.setItem(
@@ -75,6 +85,12 @@ export default function PickProfile({navigation, route}) {
 
     },[])
 
+    useEffect(()=>{
+        if(profileHasPassword.password !== ""){
+            profileHandler(profileHasPassword.id,profileHasPassword.password)
+        }
+    },[profileHasPassword])
+
     return(
         <View style={styles.container}>
 
@@ -100,10 +116,11 @@ export default function PickProfile({navigation, route}) {
                                         title={"Feedback"}
                                         message={"Message for Feedback"}
                                         hintInput ={"Enter Text"}
-                                        submitInput={ (inputText) => {
-                                            setInputPassword(inputText),
+                                        submitInput={ (inputPassword) => {
+                                            setProfileHasPassword(previousState => {
+                                                return { ...previousState, password:inputPassword }
+                                            });
                                             setDialogVisible(false);
-                                            profileHandler(itemData.item.id, inputPassword);
                                         }}
                                         closeDialog={() => setDialogVisible(false)}
                                     />
