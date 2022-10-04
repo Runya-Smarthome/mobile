@@ -36,7 +36,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Yellow,
         justifyContent: 'center',
         padding: 4,
-        alignSelf: 'flex-end'
+        alignSelf: 'flex-end',
+        alignItems: 'flex-end'
     },
     switch: {
         width: 24,
@@ -47,6 +48,6 @@ const styles = StyleSheet.create({
     },
     switchContainerPassive: {
         backgroundColor: Colors.dark300,
-        alignItems: 'flex-end'
+        alignItems: 'flex-start'
     },
 })
