@@ -53,20 +53,20 @@ export default function PickProfile({navigation, route}) {
             }
         })
 
-        console.log(data)
-
         if(data.status === 201){
             await AsyncStorage.setItem(
                 '@MyTokenProfile:key',
                 data.profilesResult
             );
-            navigation.navigate("Homepage",)
+            navigation.navigate("Homepage",{
+                id,
+                email: route.params.email
+            })
         }
 
     }
 
     useEffect(()=>{
-
         async function fetchData(){
             const token = await getToken()
             const data = await isAuth({
