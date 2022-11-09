@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Image } from 'react-native'
 
 import CardDevice from '../UI/CardDevice'
 
-export default function SmartTemperature() {
+export default function SmartTemperature({tempValue}) {
     return(
         <CardDevice>
             <View style={styles.header}>
@@ -11,7 +11,7 @@ export default function SmartTemperature() {
                     source={require('../../assets/Icons/temperature-icon.png')}
                 />
             </View>
-            <Text style={styles.tempValue}>31</Text>
+            <Text style={styles.tempValue}>{tempValue}</Text>
         </CardDevice>
     )
 }
