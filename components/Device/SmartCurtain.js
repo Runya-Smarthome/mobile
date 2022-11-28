@@ -3,9 +3,18 @@ import { useState } from 'react'
 
 import CardDevice from '../UI/CardDevice'
 import CustomSwitch from '../UI/CustomSwitch'
-import Colors from '../../constants/Colors'
+import '../../helper/IoTHelper'
 
-export default function SmartCurtain() {
+export default function SmartCurtain({connect, topic}) {
+
+    function switchValueHandler(v){
+        if( v === true){
+            connect.SwitchHandler(topic, "ON")
+        } else if(v === false){
+            connect.SwitchHandler(topic, "OF")
+        }
+    }
+
 
     return(
         <CardDevice>
@@ -14,7 +23,7 @@ export default function SmartCurtain() {
                 <Image
                     source={require('../../assets/Icons/curtains-icon.png')}
                 />
-                <CustomSwitch/>
+                <CustomSwitch onSwitchValue={switchValueHandler} />
             </View>
         </CardDevice>
     )

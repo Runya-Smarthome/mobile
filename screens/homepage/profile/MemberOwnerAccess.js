@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native'
-import Avatar from '../../components/UI/Avatar'
-import PrimaryButton from '../../components/UI/PrimaryButton'
-import SecondaryButton from '../../components/UI/SecondaryButton'
-import Title from '../../components/UI/Title'
-import Colors from '../../constants/Colors'
+import Avatar from '../../../components/UI/Avatar'
+import PrimaryButton from '../../../components/UI/PrimaryButton'
+import SecondaryButton from '../../../components/UI/SecondaryButton'
+import Title from '../../../components/UI/Title'
+import Colors from '../../../constants/Colors'
 
 export default function MemberOwnerAccess() {
 
@@ -13,7 +13,7 @@ export default function MemberOwnerAccess() {
                 <View style={styles.backButton}>
                     <Pressable>
                         <Image
-                            source={require('../../assets/Icons/arrow-left-icon.png')}
+                            source={require('../../../assets/Icons/arrow-left-icon.png')}
                         />
                     </Pressable>
                 </View>
@@ -34,13 +34,13 @@ export default function MemberOwnerAccess() {
                         <Pressable style={styles.buttonInnerContainer}>
                             <View style={styles.iconPintuAllowedRooms}>
                                 <Image
-                                    source={require('../../assets/Icons/pintu-hijau-icon.png')}
+                                    source={require('../../../assets/Icons/pintu-hijau-icon.png')}
                                 />
                             </View>
                             <Text style={styles.allowedText}>Allowed Rooms</Text>
                             <View style={styles.iconArrowAllowedRooms}>
                                 <Image
-                                    source={require('../../assets/Icons/arrow-right-grey-icon.png')}
+                                    source={require('../../../assets/Icons/arrow-right-grey-icon.png')}
                                 />
                             </View>
                         </Pressable>

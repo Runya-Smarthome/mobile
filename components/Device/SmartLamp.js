@@ -1,13 +1,24 @@
 import { View, Text, StyleSheet, Image, Pressable} from 'react-native'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Paho from 'paho-mqtt'
 
 import CardDevice from '../UI/CardDevice'
 import CustomSwitch from '../UI/CustomSwitch'
+import IoTHelper from '../../helper/IoTHelper'
+import '../../helper/IoTHelper'
 
-export default function SmartLamp({onSwitchLampValueHandler}) {
+export default function SmartLamp({topic, client}) {
+
+    client.subscribe(topic)
+
+    const connect = new IoTHelper(topic, client)
 
     function switchValueHandler(v){
-        onSwitchLampValueHandler(v);
+        if( v === true){
+            connect.SwitchHandler(topic, "ON")
+        } else if(v === false){
+            connect.SwitchHandler(topic, "OFF")
+        }
     }
 
     return(

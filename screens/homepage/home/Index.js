@@ -1,18 +1,19 @@
-import { View, Text, StyleSheet, Button, StatusBar, Image, Pressable, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Button, StatusBar, Image, Pressable, ScrollView, FlatList} from 'react-native'
 import { useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import Avatar from '../../components/UI/Avatar'
-import Title from '../../components/UI/Title';
-import GetProfile from '../../API/GetProfile';
-import Colors from '../../constants/Colors';
-import CardRoom from '../../components/UI/CardRoom';
-import CardWeather from '../../components/CardWeather';
+import Avatar from '../../../components/UI/Avatar'
+import Title from '../../../components/UI/Title';
+import GetProfile from '../../../API/GetProfile';
+import CardRoom from '../../../components/UI/CardRoom';
+import CardWeather from '../../../components/CardWeather';
+import GetRooms from '../../../API/GetRooms';
 
 
-export default function Home({route}) {
+export default function Home({navigation, route}) {
 
     const [profile, setProfile] = useState([])
+    const [listRooms, setListRooms] = useState([])
 
     async function getToken(){
         const token = await AsyncStorage.getItem('@MyTokenLogin:key');
@@ -32,12 +33,27 @@ export default function Home({route}) {
                     'Authorization': `Bearer ${token}` 
                 }
             })
-            console.log(data)
             setProfile(data.loginResult)
         }
         fetchData()
 
     },[])
+
+    useEffect(() => {
+        async function fetchDataRooms(){
+            const data = await GetRooms({
+                method: "GET",
+                params: route.params.id
+            })
+            setListRooms(data.roomResult)
+        }
+
+        const willFocusSubscription = navigation.addListener('focus', () => {
+          fetchDataRooms();
+        });
+  
+        return willFocusSubscription;
+    }, []);
 
     function capitilizeLetter(profileName){
         if(profileName !== undefined){
@@ -52,7 +68,7 @@ export default function Home({route}) {
             <View style={styles.innerContainer}>
                 <View style={styles.header}>
                     <Image
-                        source={require('../../assets/Icons/bell-icon.png')}
+                        source={require('../../../assets/Icons/bell-icon.png')}
                         style={{
                                 width: 20,
                                 height: 20
@@ -66,7 +82,7 @@ export default function Home({route}) {
                         </Title>
                     </View>
                     <Avatar
-                        color={"yellow"}
+                        color={route.params.color}
                         name={""}
                         style={{width:70, height:70}}
                     />
@@ -74,28 +90,26 @@ export default function Home({route}) {
                 <CardWeather/>
                 <View style={styles.headerDeviceRoom}>
                     <Title>My Room</Title>
-                    <Pressable>
+                    <Pressable onPress={()=>navigation.navigate('AddRoom',{idProfile:route.params.id})}>
                         <Text>Add Room +</Text>
                     </Pressable>
                 </View>
-                <ScrollView style={styles.roomOuterContainer}>
-                    <View style={styles.roomInnerContainer}>
-                        <CardRoom 
-                            title={'Living Room'}
-                            icon={'livingroom'}
-                        />
-                        <CardRoom 
-                            title={'Living Room'}
-                            icon={'livingroom'}
-                        />
-                    </View>
-                </ScrollView>
+                <FlatList
+                    columnWrapperStyle={{justifyContent: 'space-between'}}
+                    data={listRooms}
+                    numColumns={2}
+                    renderItem={(itemData)=>
+                        <Pressable onPress={()=>navigation.navigate('Room', {idRoom: itemData.item.id, roomName: itemData.item.roomName})}>
+                            <CardRoom
+                                title={itemData.item.roomName}
+                                icon={itemData.item.roomType}
+                            />
+                        </Pressable>
+                    }
+                    
+                />
             </View>
-            <View style={styles.navigationBarContainer}>
-                <View style={styles.navigationBarInnerContainer}>
-
-                </View>                               
-            </View>
+            
         </View>
     )
 }

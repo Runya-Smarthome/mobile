@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, Image, TextInput, Button, Pressable } from 'react-native'
 import { useState } from 'react' 
 
-import Title from '../../components/UI/Title'
-import Avatar from '../../components/UI/Avatar'
-import Logo from '../../components/UI/Logo'
-import PrimaryButton from '../../components/UI/PrimaryButton'
-import CustomTextInput from '../../components/UI/CustomTextInput'
-import CustomDropdown from '../../components/UI/CustomDropdown'
+import Title from '../../../components/UI/Title'
+import Avatar from '../../../components/UI/Avatar'
+import Logo from '../../../components/UI/Logo'
+import PrimaryButton from '../../../components/UI/PrimaryButton'
+import CustomTextInput from '../../../components/UI/CustomTextInput'
+import CustomDropdown from '../../../components/UI/CustomDropdown'
 
 export default function AddNewProfile({navigation}) {
 
@@ -27,7 +27,7 @@ export default function AddNewProfile({navigation}) {
                 <View style={styles.backButton}>
                     <Pressable onPress={backButtonHandler}>
                         <Image
-                            source={require('../../assets/Icons/arrow-left-icon.png')}
+                            source={require('../../../assets/Icons/arrow-left-icon.png')}
                         />
                     </Pressable>
                 </View>
