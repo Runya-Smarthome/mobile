@@ -4,6 +4,8 @@ import Colors from '../../constants/Colors'
 
 export default function CardRoom({title, icon, style}) {
 
+    const formattedTitle = title.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+
     let images;
 
     if(icon === 'livingroom'){
@@ -13,11 +15,49 @@ export default function CardRoom({title, icon, style}) {
                      />
     }
 
+    if(icon === 'bedroom'){
+        images = <Image
+                        style={{width: 32, height: 32}}
+                        source={require(`../../assets/room/bedroom.png`)}
+                     />
+    }
+
+    if(icon === 'kitchen'){
+        images = <Image
+                        style={{width: 32, height: 32}}
+                        source={require(`../../assets/room/kitchen.png`)}
+                     />
+    }
+    
+    if(icon === 'bathroom'){
+        images = <Image
+                        style={{width: 32, height: 32}}
+                        source={require(`../../assets/room/bathroom.png`)}
+                     />
+    }
+
+    if(icon === 'familyroom'){
+        images = <Image
+                        style={{width: 32, height: 32}}
+                        source={require(`../../assets/room/familyroom.png`)}
+                     />
+    }
+
+    if(icon === 'garden'){
+        images = <Image
+                        style={{width: 32, height: 32}}
+                        source={require(`../../assets/room/garden.png`)}
+                     />
+    }
+
+
     return(
         <View style={[styles.outerCard,style]}>
             <View style={styles.innerCard}>
                 {images}
-                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.title}>
+                    {formattedTitle}
+                </Text>
             </View>
         </View>
     )

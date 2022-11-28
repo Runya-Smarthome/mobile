@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
-import Title from '../../components/UI/Title'
-import Avatar from '../../components/UI/Avatar'
-import PrimaryButton from '../../components/UI/PrimaryButton'
+import Title from '../../../components/UI/Title'
+import Avatar from '../../../components/UI/Avatar'
+import PrimaryButton from '../../../components/UI/PrimaryButton'
 
 export default function ManageProfile({navigation}) {
 
@@ -17,7 +17,7 @@ export default function ManageProfile({navigation}) {
                 <View style={styles.backButton}>
                     <Pressable onPress={backButtonPressHandler}>
                         <Image
-                            source={require('../../assets/Icons/arrow-left-icon.png')}
+                            source={require('../../../assets/Icons/arrow-left-icon.png')}
                         />
                     </Pressable>
                 </View>

@@ -2,12 +2,12 @@ import { View, Text, StyleSheet, Image, TextInput, Button, Pressable, CheckBox }
 import { useState } from 'react' 
 import Checkbox from 'expo-checkbox';
 
-import Title from '../../components/UI/Title'
-import Avatar from '../../components/UI/Avatar'
-import Logo from '../../components/UI/Logo'
-import PrimaryButton from '../../components/UI/PrimaryButton'
-import CustomTextInput from '../../components/UI/CustomTextInput'
-import CustomDropdown from '../../components/UI/CustomDropdown'
+import Title from '../../../components/UI/Title'
+import Avatar from '../../../components/UI/Avatar'
+import Logo from '../../../components/UI/Logo'
+import PrimaryButton from '../../../components/UI/PrimaryButton'
+import CustomTextInput from '../../../components/UI/CustomTextInput'
+import CustomDropdown from '../../../components/UI/CustomDropdown'
 
 export default function AllowedRooms() {
 
@@ -19,7 +19,7 @@ export default function AllowedRooms() {
                     <Pressable>
                         <Image
                         style={styles.arrowBack}
-                            source={require('../../assets/Icons/arrow-left-icon.png')}
+                            source={require('../../../assets/Icons/arrow-left-icon.png')}
                         />
                     </Pressable>
                 </View>
@@ -29,7 +29,7 @@ export default function AllowedRooms() {
                 <View style={styles.ruangan}>
                     <View style={styles.untukIcon}>
                         <Image
-                            source={require('../../assets/Icons/bed-icon.png')}
+                            source={require('../../../assets/Icons/bed-icon.png')}
                         />
                     </View>
                     <Text style={styles.textAja}>Bedroom</Text>
@@ -46,7 +46,7 @@ export default function AllowedRooms() {
                 <View style={styles.ruangan}>
                     <View style={styles.untukIcon}>
                         <Image
-                            source={require('../../assets/Icons/sofa-icon.png')}
+                            source={require('../../../assets/Icons/sofa-icon.png')}
                         />
                     </View>
                     <Text style={styles.textAja}>Living Room</Text>

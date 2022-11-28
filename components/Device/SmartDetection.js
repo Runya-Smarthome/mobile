@@ -2,8 +2,17 @@ import { View, Text, StyleSheet, Image} from 'react-native'
 import { useState } from 'react'
 
 import CardDevice from '../UI/CardDevice'
+import '../../helper/IoTHelper'
 
-export default function SmartDetection() {
+export default function SmartDetection({connect,topic, client}) {
+
+    const [totalPerson, setTotalPerson] = useState()
+
+    client.onMessageArrived = onMessage;
+
+    function onMessage(message) {
+        setTotalPerson(connect.RetrieveHandler(topic, message))
+    }
 
     return(
         <CardDevice>
@@ -12,7 +21,7 @@ export default function SmartDetection() {
                 <Image
                     source={require('../../assets/Icons/detection-icon.png')}
                 />
-                <Text style={styles.text}> 1 Person </Text>
+                <Text style={styles.text}> {totalPerson} </Text>
             </View>
         </CardDevice>
     )

@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Image, Pressable} from 'react-native'
 import { useState } from 'react'
 
 import CardDevice from '../UI/CardDevice'
+import '../../helper/IoTHelper'
 
 export default function SmartDoor({onPress}) {
 

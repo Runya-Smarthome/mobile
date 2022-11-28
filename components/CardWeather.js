@@ -5,40 +5,29 @@ import Colors from '../constants/Colors'
 
 export default function CardWeather(){
 
-    // const [country, setCountry] = useState('');
-    // const [region, setRegion] = useState('');
-    // const [humidity, setHumidity] = useState('');
-    // const [temperature, setTemperature] = useState('');
-    // const [weather, setWeather] = useState('');
-
     const [cardWeatherContent, setCardWeatherContent] = useState({
         country: '',
-        region: '',
+        city: '',
         humidity: '',
         temperature: '',
         weather: ''
     })
 
     useEffect(()=>{
-        LocationHelper().then(
-            function(value) { 
-                // setCountry(value.place[0].country)
-                // setRegion(value.place[0].region)
-                // setHumidity(value.data.main.humidity)
-                // setTemperature(value.data.main.temp)
-                // setWeather(value.data.weather[0].main)
-                setCardWeatherContent({
-                    country: value.place[0].country,
-                    region: value.place[0].region,
-                    humidity: value.data.main.humidity,
-                    temperature: value.data.main.temp,
-                    weather: value.data.weather[0].main
-                })
-            },
-            function(error) { 
-                console.log(error) 
-            }
-        );
+
+        async function getlocation(){
+            const {data, place} = await LocationHelper()
+            setCardWeatherContent({
+                country: place[0].country,
+                city: place[0].city,
+                humidity: data.main.humidity,
+                temperature: data.main.temp,
+                weather: data.weather[0].main
+            })
+        }
+        
+        getlocation()
+
     },[])
 
     return(
@@ -62,7 +51,7 @@ export default function CardWeather(){
                                 height: 24
                         }}
                     />
-                    <Text style={styles.locationValueWeather}>{cardWeatherContent.region}, {cardWeatherContent.country}</Text>
+                    <Text style={styles.locationValueWeather}>{cardWeatherContent.city}, {cardWeatherContent.country}</Text>
                 </View>
                 <View style={styles.titleValueWeatherContainer}>
                     <View style={styles.titleValueWeatherOuterContainer}>
@@ -120,7 +109,7 @@ const styles = StyleSheet.create({
         color: Colors.dark300
     },
     valueWeatherContainer: {
-        flex: 1.5,
+        flex: 2,
         paddingLeft: 32,
         justifyContent: 'center'
     },

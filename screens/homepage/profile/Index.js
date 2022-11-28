@@ -1,23 +1,64 @@
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
-import Avatar from '../../components/UI/Avatar'
+import { useState, useEffect } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export default function Profile({navigation}) {
+import Avatar from '../../../components/UI/Avatar'
+import GetProfile from '../../../API/GetProfile';
+
+export default function Profile({navigation, route}) {
+
+    const [profile, setProfile] = useState([])
+
+    async function getToken(){
+        const token = await AsyncStorage.getItem('@MyTokenLogin:key');
+        return token
+    }
+
+    useEffect(() => {
+        async function fetchData(){
+            const token = await getToken()
+            const data = await GetProfile({
+                method: "POST",
+                params: route.params.id,
+                body: {
+                    email: route.params.email
+                },
+                headers: {
+                    'Authorization': `Bearer ${token}` 
+                }
+            })
+            console.log(data)
+            setProfile(data.loginResult)
+        }
+        fetchData()
+
+    },[])
+
+    function capitilizeLetter(profileName){
+        if(profileName !== undefined){
+            const capProfileName = profileName.charAt(0).toUpperCase() + profileName.slice(1);
+            return capProfileName
+        }
+
+    }
 
     function manageProfilePressHandler(){
         navigation.navigate('ManageProfile')
     };
+
     return(
         <View style={styles.container}>
             <View style={styles.imageContainer}>
                 <Avatar
-                    color={"red"}
+                    color={route.params.color}
                     owner={true}
+                    name={""}
                 />
             </View>
             <View style={styles.descProfile}>
-                <Text style={styles.namaUser}>Ripdah</Text>
-                <Text style={styles.roleEmail}>(Owner)</Text>
-                <Text style={styles.roleEmail}>ripdahSlebew@yahoo.com</Text>
+                <Text style={styles.namaUser}>{capitilizeLetter(profile.username)}</Text>
+                <Text style={styles.roleEmail}>({profile.role})</Text>
+                <Text style={styles.roleEmail}>{route.params.email}</Text>
             </View>
 
             <View style={styles.bungkusChangeManage}>
@@ -25,13 +66,13 @@ export default function Profile({navigation}) {
                     <View style={styles.changeProfile}>
                         <View style={styles.iconChangeManage}>
                             <Image
-                                source={require('../../assets/Icons/pencilbiru-icon.png')}
+                                source={require('../../../assets/Icons/pencilbiru-icon.png')}
                             />
                         </View>
                         <Text style={styles.textAja}>Change Profile</Text>
                         <View style={styles.untukIcon}>
                             <Image
-                                source={require('../../assets/Icons/arrow-right-grey-icon.png')}
+                                source={require('../../../assets/Icons/arrow-right-grey-icon.png')}
                             />
                         </View>
                     </View>
@@ -40,13 +81,13 @@ export default function Profile({navigation}) {
                     <View style={styles.manageProfile}>
                         <View style={styles.iconChangeManage}>
                             <Image
-                                source={require('../../assets/Icons/groupmerah-icon.png')}
+                                source={require('../../../assets/Icons/groupmerah-icon.png')}
                             />
                         </View>
                         <Text style={styles.textAja}>Manage Profile</Text>
                         <View style={styles.untukIcon}>
                             <Image
-                                source={require('../../assets/Icons/arrow-right-grey-icon.png')}
+                                source={require('../../../assets/Icons/arrow-right-grey-icon.png')}
                             />
                         </View>
                     </View>

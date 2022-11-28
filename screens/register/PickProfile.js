@@ -16,7 +16,8 @@ export default function PickProfile({navigation, route}) {
     
     const [profileHasPassword, setProfileHasPassword] = useState({
         id : "",
-        password : ""
+        password : "",
+        indexColor: ""
     })
 
     const [listProfiles, setListProfiles] = useState([])
@@ -28,19 +29,19 @@ export default function PickProfile({navigation, route}) {
         return token
     }
 
-    const profilePasswordHandler = (id, isPassword) => {
+    const profilePasswordHandler = (id, isPassword, indexColor) => {
         if(isPassword === true){
-            profileHandler(id, "")
+            profileHandler(id, "", indexColor)
             return;
         } else if(isPassword === false){
             setDialogVisible(true)
             setProfileHasPassword(previousState => {
-                return { ...previousState, id }
+                return { ...previousState, id, indexColor }
             });
         }
     }
     
-    const profileHandler = async (id, password) => {
+    const profileHandler = async (id, password, indexColor) => {
         const token = await getToken()
         const data = await LoginProfile({
             method: "POST",
@@ -60,7 +61,8 @@ export default function PickProfile({navigation, route}) {
             );
             navigation.navigate("Homepage",{
                 id,
-                email: route.params.email
+                email: route.params.email,
+                color: color[indexColor]
             })
         }
 
@@ -87,7 +89,7 @@ export default function PickProfile({navigation, route}) {
 
     useEffect(()=>{
         if(profileHasPassword.password !== ""){
-            profileHandler(profileHasPassword.id,profileHasPassword.password)
+            profileHandler(profileHasPassword.id,profileHasPassword.password, profileHasPassword.indexColor)
         }
     },[profileHasPassword])
 
@@ -113,9 +115,9 @@ export default function PickProfile({navigation, route}) {
                                 <View>
                                     <DialogInput 
                                         isDialogVisible={dialogVisible}
-                                        title={"Feedback"}
-                                        message={"Message for Feedback"}
-                                        hintInput ={"Enter Text"}
+                                        title={"Need Password"}
+                                        message={"Enter owner password"}
+                                        hintInput ={"password"}
                                         submitInput={ (inputPassword) => {
                                             setProfileHasPassword(previousState => {
                                                 return { ...previousState, password:inputPassword }
@@ -123,10 +125,11 @@ export default function PickProfile({navigation, route}) {
                                             setDialogVisible(false);
                                         }}
                                         closeDialog={() => setDialogVisible(false)}
+                                        textInputProps={{secureTextEntry:true}}
                                     />
                                     
                                     <Pressable 
-                                        onPress={()=>profilePasswordHandler(itemData.item.id, itemData.item.isPassword)}>
+                                        onPress={()=>profilePasswordHandler(itemData.item.id, itemData.item.isPassword, itemData.index)}>
                                         <Avatar
                                             color={color[itemData.index]}
                                             name={itemData.item.username}
