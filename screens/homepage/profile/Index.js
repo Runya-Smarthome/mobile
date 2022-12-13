@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Avatar from '../../../components/UI/Avatar'
-import GetProfile from '../../../API/GetProfile';
+import GetProfile from '../../../API/GetProfile'
+import SmallSpinner from '../../../components/UI/SmallSpinner'
 
 export default function Profile({navigation, route}) {
 
     const [profile, setProfile] = useState([])
+    const [loading, isLoading] = useState(false)
 
     async function getToken(){
         const token = await AsyncStorage.getItem('@MyTokenLogin:key');
@@ -17,6 +19,7 @@ export default function Profile({navigation, route}) {
     useEffect(() => {
         async function fetchData(){
             const token = await getToken()
+            isLoading(true)
             const data = await GetProfile({
                 method: "POST",
                 params: route.params.id,
@@ -27,8 +30,8 @@ export default function Profile({navigation, route}) {
                     'Authorization': `Bearer ${token}` 
                 }
             })
-            console.log(data)
             setProfile(data.loginResult)
+            isLoading(false)
         }
         fetchData()
 
@@ -56,8 +59,16 @@ export default function Profile({navigation, route}) {
                 />
             </View>
             <View style={styles.descProfile}>
-                <Text style={styles.namaUser}>{capitilizeLetter(profile.username)}</Text>
-                <Text style={styles.roleEmail}>({profile.role})</Text>
+                {
+                    loading
+                    ? <SmallSpinner/>
+                    : <Text style={styles.namaUser}>{capitilizeLetter(profile.username)}</Text>
+                }
+                {
+                    loading
+                    ? <SmallSpinner/>
+                    : <Text style={styles.roleEmail}>({profile.role})</Text>
+                }
                 <Text style={styles.roleEmail}>{route.params.email}</Text>
             </View>
 

@@ -1,6 +1,15 @@
-import { View, Text, StyleSheet, Button, StatusBar, Image, Pressable, ScrollView, FlatList} from 'react-native'
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    StatusBar,
+    Image, 
+    Pressable, 
+    FlatList
+} from 'react-native'
 import { useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import SmallSpinner from '../../../components/UI/SmallSpinner'
 
 import Avatar from '../../../components/UI/Avatar'
 import Title from '../../../components/UI/Title';
@@ -12,6 +21,8 @@ import GetRooms from '../../../API/GetRooms';
 
 export default function Home({navigation, route}) {
 
+    const [loadingProfile, isLoadingProfile] = useState(false)
+    const [loadingCardRoom, isLoadingCardRoom] = useState(false)
     const [profile, setProfile] = useState([])
     const [listRooms, setListRooms] = useState([])
 
@@ -22,6 +33,7 @@ export default function Home({navigation, route}) {
 
     useEffect(() => {
         async function fetchData(){
+            isLoadingProfile(true)
             const token = await getToken()
             const data = await GetProfile({
                 method: "POST",
@@ -34,6 +46,7 @@ export default function Home({navigation, route}) {
                 }
             })
             setProfile(data.loginResult)
+            isLoadingProfile(false)
         }
         fetchData()
 
@@ -41,19 +54,28 @@ export default function Home({navigation, route}) {
 
     useEffect(() => {
         async function fetchDataRooms(){
+            isLoadingCardRoom(true)
             const data = await GetRooms({
                 method: "GET",
                 params: route.params.id
             })
-            setListRooms(data.roomResult)
+            listRoomHandler(data);
+            isLoadingCardRoom(false)
         }
 
         const willFocusSubscription = navigation.addListener('focus', () => {
           fetchDataRooms();
         });
   
-        return willFocusSubscription;
+        return () =>{
+            willFocusSubscription;
+            setListRooms({});
+        } 
     }, []);
+
+    function listRoomHandler(data){
+        setListRooms(data.roomResult)
+    }
 
     function capitilizeLetter(profileName){
         if(profileName !== undefined){
@@ -77,9 +99,12 @@ export default function Home({navigation, route}) {
                 </View>
                 <View style={styles.profile}>
                     <View style={styles.profileTitle}>
-                        <Title style={styles.title}>
-                            Welcome Home, {capitilizeLetter(profile.username)}!
-                        </Title>
+                        {
+                            loadingProfile
+                            ? <SmallSpinner/>
+                            : <Title style={styles.title}>Welcome Home, {capitilizeLetter(profile.username)}! </Title>
+                        }
+  
                     </View>
                     <Avatar
                         color={route.params.color}
@@ -94,20 +119,25 @@ export default function Home({navigation, route}) {
                         <Text>Add Room +</Text>
                     </Pressable>
                 </View>
-                <FlatList
-                    columnWrapperStyle={{justifyContent: 'space-between'}}
-                    data={listRooms}
-                    numColumns={2}
-                    renderItem={(itemData)=>
-                        <Pressable onPress={()=>navigation.navigate('Room', {idRoom: itemData.item.id, roomName: itemData.item.roomName})}>
-                            <CardRoom
-                                title={itemData.item.roomName}
-                                icon={itemData.item.roomType}
-                            />
-                        </Pressable>
-                    }
-                    
-                />
+                {
+                    loadingCardRoom
+                    ? <SmallSpinner/>
+                    :
+                    <FlatList
+                        columnWrapperStyle={{justifyContent: 'space-between'}}
+                        data={listRooms}
+                        numColumns={2}
+                        renderItem={(itemData)=>
+                            <Pressable onPress={()=>navigation.navigate('Room', {idRoom: itemData.item.id, roomName: itemData.item.roomName})}>
+                                <CardRoom
+                                    title={itemData.item.roomName}
+                                    icon={itemData.item.roomType}
+                                />
+                            </Pressable>
+                        }
+                    />
+                }
+                
             </View>
             
         </View>

@@ -12,9 +12,11 @@ import {
 } from '@expo-google-fonts/inter';
 
 import AppLoading from 'expo-app-loading';
-import { View, Text, StyleSheet } from 'react-native';
 
 import AppNavigator from './navigation/AppNavigator'
+
+import ConfigProfile from './screens/register/ConfigProfile';
+
 
 export default function App() {
 
@@ -39,8 +41,4 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 70
-  },
-});
+

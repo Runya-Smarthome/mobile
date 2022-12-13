@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, Pressable, FlatList, Text } from 'react-native'
+import { View, Image, StyleSheet, Pressable, FlatList } from 'react-native'
 import { useEffect, useState  } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import DialogInput from 'react-native-dialog-input';
@@ -8,9 +8,12 @@ import Logo from '../../components/UI/Logo'
 import Title from '../../components/UI/Title'
 import isAuth from '../../API/Auth'
 import LoginProfile from '../../API/LoginProfile'
+import LargeSpinner from '../../components/UI/LargeSpinner';
 
 
 export default function PickProfile({navigation, route}) {
+
+    const [loading, isLoading] = useState(false)
 
     const [dialogVisible, setDialogVisible] = useState(false)
     
@@ -30,10 +33,10 @@ export default function PickProfile({navigation, route}) {
     }
 
     const profilePasswordHandler = (id, isPassword, indexColor) => {
-        if(isPassword === true){
+        if(isPassword === false){
             profileHandler(id, "", indexColor)
             return;
-        } else if(isPassword === false){
+        } else if(isPassword === true){
             setDialogVisible(true)
             setProfileHasPassword(previousState => {
                 return { ...previousState, id, indexColor }
@@ -42,6 +45,7 @@ export default function PickProfile({navigation, route}) {
     }
     
     const profileHandler = async (id, password, indexColor) => {
+        isLoading(true)
         const token = await getToken()
         const data = await LoginProfile({
             method: "POST",
@@ -55,6 +59,7 @@ export default function PickProfile({navigation, route}) {
         })
 
         if(data.status === 201){
+            isLoading(false)
             await AsyncStorage.setItem(
                 '@MyTokenProfile:key',
                 data.profilesResult
@@ -70,6 +75,7 @@ export default function PickProfile({navigation, route}) {
 
     useEffect(()=>{
         async function fetchData(){
+            isLoading(true)
             const token = await getToken()
             const data = await isAuth({
                 method: "POST",
@@ -81,6 +87,7 @@ export default function PickProfile({navigation, route}) {
                 }
             })
             setListProfiles(data.profilesResult)
+            isLoading(false)
         }
 
         fetchData()
@@ -95,7 +102,7 @@ export default function PickProfile({navigation, route}) {
 
     return(
         <View style={styles.container}>
-
+            {loading && <LargeSpinner/>}
             <Image
                 source={require('../../assets/object/Ellipse-10.png')}
                 style={{width: 157, height: 157, resizeMode: "contain", position: "absolute", right: -60}}
