@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native'
 
 import Colors from '../../constants/Colors'
 
-export default function PrimaryButton({children, onPress, style}){
+export default function PrimaryButton({children, onPress, style, disabled}){
     return(
         <View style={[styles.buttonOuterContainer, style]}>
             <Pressable
@@ -11,6 +11,7 @@ export default function PrimaryButton({children, onPress, style}){
                             ? [styles.buttonInnerContainer, styles.pressed]
                             : styles.buttonInnerContainer }
                 onPress={onPress}
+                disabled={disabled}
             >
                 <Text style={styles.button}>
                     {children}

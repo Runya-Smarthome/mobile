@@ -7,9 +7,12 @@ import CustomTextInput from '../../components/UI/CustomTextInput'
 import PrimaryButton from '../../components/UI/PrimaryButton'
 import Title from '../../components/UI/Title'
 import LoginApi from '../../API/Login'
+import LargeSpinner from '../../components/UI/LargeSpinner'
 
 
 export default function Login({navigation}) {
+
+    const [loading, isLoading] = useState(false)
 
     const [user, setUser] = useState({
         email: '',
@@ -24,6 +27,7 @@ export default function Login({navigation}) {
     };
 
     async function onSubmitHandler(){
+        isLoading(true)
         const data = await LoginApi({
             method: "POST",
             body: {
@@ -33,23 +37,25 @@ export default function Login({navigation}) {
         })
 
         if(data.status === 201){
+            isLoading(false)
             Alert.alert(
                 "Login Success",
                 data.message,
                 [{text: "OK"}],
                 [{cancelable: true}]
             );
-
+            isLoading(true)
             await AsyncStorage.setItem(
                 '@MyTokenLogin:key',
                 data.loginResult
             );
-            
+            isLoading(false)
             navigation.navigate("PickProfile",{
                 email: user.email
             })
 
         } else{
+            isLoading(false)
             Alert.alert(
                 "Failed to Sign In",
                 data.message,
@@ -65,6 +71,7 @@ export default function Login({navigation}) {
     
     return(
         <View style={styles.container}>
+            {loading && <LargeSpinner/>}
             <Image
                 style={styles.objectTop}
                 source={require("../../assets/object/Rectangle-7.png")}
@@ -75,7 +82,7 @@ export default function Login({navigation}) {
                 </View>
                 <View>
                     <Title>Log In</Title>
-                    <CustomTextInput 
+                    <CustomTextInput
                         style={{marginTop: 16}} 
                         placeholder={"Email"}
                         onChangeText={(text) => updateState('email', text)}

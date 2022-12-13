@@ -1,19 +1,12 @@
-import { View, StyleSheet, Pressable, Image, StatusBar } from 'react-native'
+import { View, StyleSheet, Pressable, Image, StatusBar, BackHandler } from 'react-native'
 import { useEffect, useState } from 'react'
 import Paho from 'paho-mqtt'
 
 import Title from '../../../components/UI/Title'
-import SmartBell from '../../../components/Device/SmartBell'
-import SmartCurtain from '../../../components/Device/SmartCurtain'
-import SmartDetection from '../../../components/Device/SmartDetection'
-import SmartDoor from '../../../components/Device/SmartDoor'
-import SmartGarden from '../../../components/Device/SmartGarden'
-import SmartLamp from '../../../components/Device/SmartLamp'
-import SmartTemperature from '../../../components/Device/SmartTemperature'
 import GetFeatures from '../../../API/GetFeatures'
-
-import IoTHelper from '../../../helper/IoTHelper'
 import RoomList from '../../../components/RoomList'
+import LargeSpinner from '../../../components/UI/LargeSpinner'
+import SmallSpinner from '../../../components/UI/SmallSpinner'
 
 const client = new Paho.Client("80a2394d39414c4386f58ac618f6ae44.s2.eu.hivemq.cloud", Number(8884), "clientId-cRKSetRRgQ", );
 
@@ -23,19 +16,23 @@ export default function Room({navigation, route}){
 
     const [features, setFeatures] = useState([])
     const [connectStatus, setConnectStatus] = useState(false)
+    const [loading, isLoading] = useState(false)
 
     useEffect(()=>{
         async function fetchData(){
+            isLoading(true)
             const data = await GetFeatures({
                 method: "GET",
                 params: route.params.idRoom
             })
             setFeatures(data.feautureResult)
+            isLoading(false)
         }
         fetchData()
     },[])
 
     useEffect(() => {
+        isLoading(true)
         client.connect( {
             onSuccess: () => { 
                 console.log("Connected!");
@@ -50,15 +47,27 @@ export default function Room({navigation, route}){
         });
     }, [])
 
+    useEffect(() => {
+        function handleBackButton() {
+          backButtonHandler();
+          return true;
+        }
+    
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+    
+        return () => backHandler.remove();
+      }, [navigation]);
+
 
     function backButtonHandler(){
+        console.log("masuk sini")
         client.disconnect()
         navigation.goBack()
     }
 
     return(
         <View style={styles.container}>
-            <Pressable onPress={backButtonHandler}>
+            <Pressable disabled={loading} onPress={backButtonHandler}>
                 <View style={styles.header}>
                     <Image
                         style={{marginRight:8}}
@@ -67,6 +76,7 @@ export default function Room({navigation, route}){
                     <Title>{formattedTitleRoom}</Title>
                 </View>
             </Pressable>
+            {loading && <SmallSpinner/>}
             {features.length > 0 && connectStatus == true ?
                 <RoomList
                     features = {features}
@@ -82,6 +92,7 @@ export default function Room({navigation, route}){
 const styles = StyleSheet.create({
     container:{
         flex: 1,
+        borderWidth: 1,
         paddingVertical: StatusBar.currentHeight + 20,
         paddingHorizontal: 24
     },

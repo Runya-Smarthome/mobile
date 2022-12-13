@@ -6,9 +6,12 @@ import Logo from '../../components/UI/Logo'
 import CustomTextInput from '../../components/UI/CustomTextInput'
 import PrimaryButton from '../../components/UI/PrimaryButton'
 import Title from '../../components/UI/Title'
+import LargeSpinner from '../../components/UI/LargeSpinner'
 
 
 export default function Login({navigation}) {
+
+    const [loading, isLoading] = useState(false)
 
     const [user, setUser] = useState({
         username: '',
@@ -30,7 +33,7 @@ export default function Login({navigation}) {
     }
 
     async function submitHandler(){
-
+        isLoading(true)
         const data = await signupApi({
             method: "POST",
             body: {
@@ -43,12 +46,14 @@ export default function Login({navigation}) {
         }) 
                 
         if(data.status === 201){
+            isLoading(false)
             navigation.navigate("ConfigProfile",{
                 email: user.email,
                 password: user.password
             })
             
         } else{
+            isLoading(false)
             Alert.alert(
                 "Failed to Sign In",
                 data.message,
@@ -61,6 +66,7 @@ export default function Login({navigation}) {
 
     return(
         <View style={styles.container}>
+            {loading && <LargeSpinner/>}
             <Image
                 style={styles.objectTop}
                 source={require("../../assets/object/Rectangle-7.png")}
@@ -102,7 +108,7 @@ export default function Login({navigation}) {
                         value={user.rePassword}
                         secureTextEntry={true}
                     />
-                    <Pressable onPress={loginPageHandler}>
+                    <Pressable style={{marginBottom: 12}} onPress={loginPageHandler}>
                         <Text style={styles.textSmall}>Have an account?</Text>
                     </Pressable>
                 </View>

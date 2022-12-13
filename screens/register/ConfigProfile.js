@@ -1,18 +1,18 @@
-import { View, Text, StyleSheet, Alert } from 'react-native'
-import { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, Alert} from 'react-native'
+import { useState } from 'react'
+import { Picker } from '@react-native-picker/picker';
 
 import Logo from '../../components/UI/Logo'
 import Title from '../../components/UI/Title'
 import PrimaryButton from '../../components/UI/PrimaryButton'
-import CustomDropdown from '../../components/UI/CustomDropdown'
-import CustomTextInput from '../../components/UI/CustomTextInput'
 import Colors from '../../constants/Colors'
+import ListProfileConfiguration from '../../components/ListProfileConfiguration';
 
 export default function ConfigProfile({navigation, route}) {
 
     const [profiles, setProfiles] = useState([])
     
-    const changeInputHandler = (event, index) => {
+    const textInputHandler = (event, index) => {
         const {target, text} = event.nativeEvent 
         const list= [...profiles];
         if(list[index] === undefined){
@@ -26,43 +26,17 @@ export default function ConfigProfile({navigation, route}) {
         }
     }
 
-    const [statusOpenTotalPerson, setStatusOpenTotalPerson] = useState(false)
-    const [valueTotalPerson, setValueTotalPerson] = useState(0);
-    const [itemsTotalPerson, setItemsTotalPerson] = useState([
-      {label: '1 person', value: 1},
-      {label: '2 person', value: 2},
-      {label: '3 person', value: 3},
-      {label: '4 person', value: 4},
-    ]);
+    const [totalPerson, setTotalPerson] = useState(1)
 
-    
-    const selectedItemTotalPersonHandler = (value) => {
-        setValueTotalPerson(value)
-    }
-
-    const dropdownOpenHandler = () => {
-        setStatusOpenTotalPerson(true)
-    }
-
-    const dropdownCloseHandler = () => {
-        setStatusOpenTotalPerson(false)
-    }
-
-    const [itemsRole, setItemsRole] = useState([
-      {label: 'owner', value: "owner"},
-      {label: 'member', value: "member"},
-    ]);
-
-    const selectedItemRoleHandler = (event, index) => {
-
+    const selectItemHandler = (event, index) => {
         const list= [...profiles];
         if(list[index] === undefined){
             list[index]= {
-                role: event.value,
+                role: event,
             };
             setProfiles(list);
         } else {
-            list[index].role = event.value
+            list[index].role = event
             setProfiles(list);
         }
 
@@ -82,7 +56,7 @@ export default function ConfigProfile({navigation, route}) {
         //validation
         let role = []
         if(profiles.length > 0){
-            for(let i = 0; i < valueTotalPerson; i++){
+            for(let i = 0; i < totalPerson; i++){
                 if(profiles[i] === undefined){
                     Alert.alert(
                         "Failed to continue",
@@ -91,7 +65,7 @@ export default function ConfigProfile({navigation, route}) {
                         [{cancelable: true}]
                     );
                     return;
-                }else if(profiles[i].role === undefined){
+                }else if(profiles[i].role === undefined || profiles[i].role === ""){
                     Alert.alert(
                         "Failed to continue",
                         "role should not be empty",
@@ -131,7 +105,14 @@ export default function ConfigProfile({navigation, route}) {
                 [{cancelable: true}]
             );
             return;
-        }else{
+        } else if(totalOwner > 1){
+            Alert.alert(
+                "Failed to continue",
+                "Owner should be just 1",
+                [{text: "OK"}],
+                [{cancelable: true}]
+            );
+        } else{
             navigation.navigate("ConfigProfilePassword",{
                 email: route.params.email,
                 password: route.params.password,
@@ -146,46 +127,36 @@ export default function ConfigProfile({navigation, route}) {
             <View style={{marginTop: 4, alignItems: "center"}}>
                 <Logo/>
             </View>
-            <View style={{marginTop: 90}}>
+            <View style={{marginTop: 20}}>
                 <Title>Profile Configuration</Title>
                 <View style={{marginTop: 24}}>
                     <Text style={styles.titleInput}>
                         Total Profile <Text style={styles.subTitleInput}>(max. 4 people)</Text>
                     </Text>
                     <View style={{marginTop: 12, elevation: 3,zIndex: 3}}>
-                        <CustomDropdown
-                            width={150}
-                            placeholder={"Total Person"}
-                            value={valueTotalPerson}
-                            items={itemsTotalPerson}
-                            setValue={setValueTotalPerson}
-                            setItems={setItemsTotalPerson}
-                            onChangeValue={selectedItemTotalPersonHandler}
-                            onOpen={dropdownOpenHandler}
-                            onClose={dropdownCloseHandler}
-                        />
+                        <Picker
+                            selectedValue={totalPerson}
+                            mode={"dropdown"}
+                            style={{width:100}}
+                            onValueChange={(itemValue) =>
+                                setTotalPerson(itemValue)
+                            }>
+                            <Picker.Item label="1" value={1} />
+                            <Picker.Item label="2" value={2} />
+                            <Picker.Item label="3" value={3} />
+                            <Picker.Item label="4" value={4} />
+                        </Picker>
                     </View>
                     <Text style={[styles.titleInput,{marginTop: 12}]}>Create username and role</Text>
                     {
-                        Array(valueTotalPerson).fill().map((_, i) => (
-                            <View key={i} style={{marginTop: 12,flexDirection: 'row'}}>
-                                <CustomTextInput 
-                                    style={{width: "60%", marginRight: 22}} 
-                                    placeholder={"username"}
-                                    editable={statusOpenTotalPerson === true ? false : true}
-                                    onChange={(e)=>changeInputHandler(e,i)}
-                                />
-                                <View style={{elevation: 4-i, zIndex: 4-i}}>
-                                    <CustomDropdown
-                                        width={105}
-                                        placeholder={"Role"}
-                                        items={itemsRole}
-                                        value={profiles[i] === undefined ? "Role" : profiles[i].role }
-                                        setItems={setItemsRole}
-                                        onSelectItem={(e)=>selectedItemRoleHandler(e,i)}
-                                    />
-                                </View>
-                            </View>
+                        Array(totalPerson).fill().map((_, i) => (
+                            <ListProfileConfiguration
+                                key={i}
+                                index={i}
+                                profiles={profiles}
+                                onTextInput={textInputHandler}
+                                onSelectItem={selectItemHandler}
+                            />
                         ))
                     }
                 </View>
@@ -201,12 +172,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
+        minHeight: 700
     },
     buttonContainer: {
         flex: 1,
         justifyContent: "flex-end",
-        alignItems: "center",
-        marginBottom: 20
+        alignSelf: 'center',
+        marginBottom: 20,
     },
     titleInput: {
         fontFamily: 'Inter_500Medium',

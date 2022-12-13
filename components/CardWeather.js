@@ -1,9 +1,12 @@
-import {View, Image, Text, StyleSheet} from 'react-native'
+import {View, Image, Text, StyleSheet } from 'react-native'
 import { useEffect, useState } from 'react'
 import LocationHelper from '../helper/LocationHelper'
 import Colors from '../constants/Colors'
+import SmallSpinner from './UI/SmallSpinner'
 
 export default function CardWeather(){
+
+    const [loading, isLoading] = useState(false)
 
     const [cardWeatherContent, setCardWeatherContent] = useState({
         country: '',
@@ -16,6 +19,7 @@ export default function CardWeather(){
     useEffect(()=>{
 
         async function getlocation(){
+            isLoading(true)
             const {data, place} = await LocationHelper()
             setCardWeatherContent({
                 country: place[0].country,
@@ -24,6 +28,7 @@ export default function CardWeather(){
                 temperature: data.main.temp,
                 weather: data.weather[0].main
             })
+            isLoading(false)
         }
         
         getlocation()
@@ -40,7 +45,12 @@ export default function CardWeather(){
                             height: 86.4
                     }}
                 />
-                <Text style={styles.iconWeatherText}>{cardWeatherContent.weather}</Text>
+                {
+                    loading 
+                    ? <SmallSpinner/>
+                    : <Text style={styles.iconWeatherText}>{cardWeatherContent.weather}</Text>
+                }
+               
             </View>
             <View style={styles.valueWeatherContainer}>
                 <View style={styles.locationValueWeatherContainer}>
@@ -51,7 +61,12 @@ export default function CardWeather(){
                                 height: 24
                         }}
                     />
-                    <Text style={styles.locationValueWeather}>{cardWeatherContent.city}, {cardWeatherContent.country}</Text>
+                    {
+                        loading
+                        ? <SmallSpinner/>
+                        : <Text style={styles.locationValueWeather}>{cardWeatherContent.city}, {cardWeatherContent.country}</Text>
+                    }
+                    
                 </View>
                 <View style={styles.titleValueWeatherContainer}>
                     <View style={styles.titleValueWeatherOuterContainer}>
@@ -65,8 +80,11 @@ export default function CardWeather(){
                             />
                             <Text style={styles.titleValueWeather}>Temperature</Text>
                         </View>
-                        <Text style={styles.valueWeather}>{cardWeatherContent.temperature}</Text>
-                        
+                        {
+                            loading
+                            ? <SmallSpinner/>
+                            : <Text style={styles.valueWeather}>{cardWeatherContent.temperature}</Text>
+                        }
                     </View>
                     <View style={[styles.titleValueWeatherOuterContainer,{marginLeft: 12}]}>
                         <View style={styles.titleValueWeatherInnerContainer}>
@@ -79,7 +97,11 @@ export default function CardWeather(){
                             />
                             <Text style={styles.titleValueWeather}>Humidity</Text>
                         </View>
-                        <Text style={styles.valueWeather}>{cardWeatherContent.humidity}</Text>
+                        {
+                            loading
+                            ? <SmallSpinner/>
+                            : <Text style={styles.valueWeather}>{cardWeatherContent.humidity}</Text>
+                        }
                     </View>
                 </View>
             </View>
