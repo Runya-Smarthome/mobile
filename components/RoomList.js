@@ -1,6 +1,4 @@
 import { View, StyleSheet } from 'react-native'
-import Paho from 'paho-mqtt'
-import { useEffect } from 'react'
 
 import SmartBell from './Device/SmartBell'
 import SmartCurtain from './Device/SmartCurtain'
@@ -10,18 +8,7 @@ import SmartGarden from './Device/SmartGarden'
 import SmartLamp from './Device/SmartLamp'
 import SmartTemperature from './Device/SmartTemperature'
 
-import IoTHelper from '../helper/IoTHelper'
-// const client = new Paho.Client("80a2394d39414c4386f58ac618f6ae44.s2.eu.hivemq.cloud", Number(8884), "clientId-cRKSetRRgQ", );
-
 export default function RoomList({features, client}){
-
-    // const subTopic = features.map((e)=>{
-    //     return (
-    //         e.topic
-    //     )
-    // })
-
-
 
     return(
         <View style={styles.container}>
@@ -45,7 +32,11 @@ export default function RoomList({features, client}){
                     )
                 } else if(feature.featureType === "smartgarden"){
                     return(
-                        <SmartGarden/>
+                        <SmartGarden
+                            key={i}
+                            topic={feature.topic}
+                            client={client}
+                        />
                     )
                 } else if(feature.featureType === "smartdoor"){
                     return(
