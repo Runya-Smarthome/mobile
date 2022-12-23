@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image } from 'react-native'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 import CardDevice from '../UI/CardDevice'
 import IoTHelper from '../../helper/IoTHelper'
@@ -31,7 +31,7 @@ export default function SmartTemperature({topic, client}) {
                     source={require('../../assets/Icons/temperature-icon.png')}
                 />
             </View>
-            <Text style={styles.tempValue}>{tempValue}</Text>
+            <Text style={styles.tempValue}>{tempValue} &#8451;</Text>
         </CardDevice>
     )
 }

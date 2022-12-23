@@ -2,9 +2,31 @@ import { View, Text, StyleSheet, Image} from 'react-native'
 import { useState } from 'react'
 
 import CardDevice from '../UI/CardDevice'
+import IoTHelper from '../../helper/IoTHelper'
 import '../../helper/IoTHelper'
 
-export default function SmartGarden() {
+export default function SmartGarden({topic, client}) {
+
+    const [moisture, setMoisture] = useState()
+    const [pumpFlowStatus, setPumpFlowStatus] = useState(false)
+
+    client.subscribe(topic)
+
+    const connect = new IoTHelper(topic, client)
+
+    client.onMessageArrived = onMessage;
+
+    function onMessage(message) {
+        const value = connect.RetrieveHandler(topic, message)
+        console.log(value)
+        if(value !== 'nan' && value !== undefined){
+            valueInt = parseInt(value)
+            setMoisture(parseInt(valueInt))
+            if(valueInt < 800){
+                setPumpFlowStatus(true)
+            }
+        }
+    }
 
     return(
         <CardDevice>
@@ -14,8 +36,8 @@ export default function SmartGarden() {
                     source={require('../../assets/Icons/garden-icon.png')}
                 />
                 <View style={styles.contentDeviceStatus} >
-                    <Text style={styles.text}> Moistures : 50% </Text>
-                    <Text style={styles.text}> Air Flow: On </Text>
+                    <Text style={styles.text}> Moist : {moisture} </Text>
+                    <Text style={styles.text}> Pump: {pumpFlowStatus == true ? "ON" : "OFF"} </Text>
                 </View>
             </View>
         </CardDevice>

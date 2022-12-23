@@ -5,7 +5,7 @@ import Colors from '../../constants/Colors'
 
 export default function CustomSwitch ({onSwitchValue}) {
 
-    const [value, setValue] = useState(false)
+    const [value, setValue] = useState(true)
 
     function changeValue() {
         setValue(!value);
