@@ -7,7 +7,9 @@ import CustomSwitch from '../UI/CustomSwitch'
 import IoTHelper from '../../helper/IoTHelper'
 import '../../helper/IoTHelper'
 
-export default function SmartLamp({topic, client}) {
+export default function SmartLamp({topic, client, name}) {
+    
+    const formattedName = name.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
 
     client.subscribe(topic)
 
@@ -23,7 +25,7 @@ export default function SmartLamp({topic, client}) {
 
     return(
         <CardDevice>
-            <Text style={styles.title}>Smart Lamp</Text>
+            <Text style={styles.title}>{formattedName}</Text>
             <View style={styles.content} >
                 <Image
                     source={require('../../assets/Icons/lamp-icon.png')}

@@ -10,6 +10,7 @@ const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator()
 import HomeIndex from '../screens/homepage/home/Index'
 import ProfileIndex from '../screens/homepage/profile/Index'
+import AddDevice from '../screens/homepage/home/AddDevice'
 import Colors from '../constants/Colors';
 
 function MainTabNavigator({route}){
@@ -49,6 +50,16 @@ function MainTabNavigator({route}){
                 }} 
                 name="Profile" 
                 component={ProfileIndex}
+            />
+                        <Tab.Screen 
+                initialParams={{id:route.params.id, email:route.params.email, color:route.params.color}}
+                options={{
+                    tabBarIcon:({color}) => (
+                        <MaterialCommunityIcons name="plus" color={color} size={24} />
+                    )
+                }} 
+                name="Add Device" 
+                component={AddDevice}
             />
         </Tab.Navigator>
     )

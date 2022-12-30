@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, ScrollView  } from 'react-native'
 
 import SmartBell from './Device/SmartBell'
 import SmartCurtain from './Device/SmartCurtain'
@@ -11,6 +11,7 @@ import SmartTemperature from './Device/SmartTemperature'
 export default function RoomList({features, client}){
 
     return(
+        <ScrollView>
         <View style={styles.container}>
             {features.map((feature,i)=>{
                 if(feature.featureType === "smartlamp"){
@@ -19,7 +20,7 @@ export default function RoomList({features, client}){
                             key={i} 
                             topic={feature.topic}
                             client = {client}
-
+                            name={feature.featureName}
                         />
                     )
                 } else if(feature.featureType === "smarttemperature"){
@@ -28,6 +29,7 @@ export default function RoomList({features, client}){
                             key={i} 
                             topic={feature.topic}
                             client={client}
+                            name={feature.featureName}
                         />
                     )
                 } else if(feature.featureType === "smartgarden"){
@@ -36,43 +38,19 @@ export default function RoomList({features, client}){
                             key={i}
                             topic={feature.topic}
                             client={client}
+                            name={feature.featureName}
                         />
                     )
-                } else if(feature.featureType === "smartdoor"){
-                    return(
-                        <SmartDoor/>
-                    )
-                } else if(feature.featureType === "smartdetection"){
-                    return(
-                        <SmartDetection
-                            connect={connect} 
-                            key={i} 
-                            topic={feature.topic}
-                            client={client}
-                        />
-                    )
-                } else if(feature.featureType === "smartcurtain"){
-                    return(
-                        <SmartCurtain
-                            connect={connect} 
-                            key={i} 
-                            topic={feature.topic} 
-                        />
-                    )
-                } else if(feature.featureType === "smartbell"){
-                    return(
-                        <SmartBell/>
-                    )
-                }
+                } 
             })}
         </View>
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        flexWrap: 'wrap',
     }
 })

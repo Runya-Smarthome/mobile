@@ -1,14 +1,15 @@
 import axios from 'axios'
 import {BASE_URL, API_TOKEN} from "@env"
 
-const AddRoom = async (req, res) => {
-    const API_ADDROOM = `${BASE_URL}/api/room/addRoom/${req.params}`
+const addFeatures = async (req, res) => {
+    const API_ADDFEATURES = `${BASE_URL}/api/feature/addFeature/${req.params}`
     switch(req.method){
         case "POST":
             try {
-                const result = await axios.post(API_ADDROOM,{
-                    roomName: req.body.roomName,
-                    roomType: req.body.roomType
+                const result = await axios.post(API_ADDFEATURES,{
+                    topic: req.body.topic,
+                    featureType: req.body.featureType,
+                    featureName: req.body.featureName
                 })
                 return{
                     registerResult: result.data.data.registerResult,
@@ -26,4 +27,4 @@ const AddRoom = async (req, res) => {
     }
 }
 
-export default AddRoom
+export default addFeatures
