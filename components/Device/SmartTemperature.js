@@ -5,9 +5,10 @@ import CardDevice from '../UI/CardDevice'
 import IoTHelper from '../../helper/IoTHelper'
 import '../../helper/IoTHelper'
 
-export default function SmartTemperature({topic, client}) {
+export default function SmartTemperature({topic, client, name}) {
 
-    
+    const formattedName = name.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+
     const [tempValue, setTempValue] = useState()
 
     client.subscribe(topic)
@@ -26,7 +27,7 @@ export default function SmartTemperature({topic, client}) {
     return(
         <CardDevice>
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>Temperature</Text>
+                <Text style={styles.headerTitle}>{formattedName}</Text>
                 <Image
                     source={require('../../assets/Icons/temperature-icon.png')}
                 />

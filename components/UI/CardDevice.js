@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
         width: 150,
         height: 90,
         borderRadius: 8,
+        margin: 8,
         backgroundColor: Colors.Green300,
         elevation: 12,
         

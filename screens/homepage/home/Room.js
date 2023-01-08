@@ -1,12 +1,12 @@
-import { View, StyleSheet, Pressable, Image, StatusBar, BackHandler } from 'react-native'
+import { View, StyleSheet, Pressable, Image, StatusBar, BackHandler, Text } from 'react-native'
 import { useEffect, useState } from 'react'
 import Paho from 'paho-mqtt'
 
 import Title from '../../../components/UI/Title'
 import GetFeatures from '../../../API/GetFeatures'
 import RoomList from '../../../components/RoomList'
-import LargeSpinner from '../../../components/UI/LargeSpinner'
 import SmallSpinner from '../../../components/UI/SmallSpinner'
+import PrimaryButton from '../../../components/UI/PrimaryButton'
 
 const client = new Paho.Client("80a2394d39414c4386f58ac618f6ae44.s2.eu.hivemq.cloud", Number(8884), "clientId-cRKSetRRgQ", );
 
@@ -60,7 +60,6 @@ export default function Room({navigation, route}){
 
 
     function backButtonHandler(){
-        console.log("masuk sini")
         client.disconnect()
         navigation.goBack()
     }
