@@ -24,7 +24,7 @@ export default function SmartGarden({topic, client, name}) {
         if(value !== 'nan' && value !== undefined){
             valueInt = parseInt(value)
             setMoisture(parseInt(valueInt))
-            if(valueInt < 800){
+            if(valueInt > 1000){
                 setPumpFlowStatus(true)
             }
         }
